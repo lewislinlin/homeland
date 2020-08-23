@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Team < User
   has_many :team_users
   has_many :users, through: :team_users
@@ -19,9 +21,5 @@ class Team < User
 
   def owner?(user)
     self.team_users.accepted.exists?(role: :owner, user_id: user.id)
-  end
-
-  def member?(user)
-    self.team_users.accepted.exists?(user_id: user.id)
   end
 end

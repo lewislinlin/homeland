@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 module Admin
   class NodesController < Admin::ApplicationController
-    before_action :set_node, only: [:show, :edit, :update, :destroy]
+    before_action :set_node, only: %i[show edit update destroy]
 
     def index
       @nodes = Node.sorted.includes(:section)
@@ -20,17 +22,17 @@ module Admin
       @node = Node.new(params[:node].permit!)
 
       if @node.save
-        redirect_to(admin_nodes_path, notice: 'Node was successfully created.')
+        redirect_to(admin_nodes_path, notice: "Node was successfully created.")
       else
-        render action: 'new'
+        render action: "new"
       end
     end
 
     def update
-      if @node.update_attributes(params[:node].permit!)
-        redirect_to(admin_nodes_path, notice: 'Node was successfully updated.')
+      if @node.update(params[:node].permit!)
+        redirect_to(admin_nodes_path, notice: "Node was successfully updated.")
       else
-        render action: 'edit'
+        render action: "edit"
       end
     end
 
@@ -41,8 +43,8 @@ module Admin
 
     private
 
-    def set_node
-      @node = Node.find(params[:id])
-    end
+      def set_node
+        @node = Node.find(params[:id])
+      end
   end
 end

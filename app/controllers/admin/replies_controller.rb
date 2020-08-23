@@ -1,25 +1,25 @@
+# frozen_string_literal: true
+
 module Admin
   class RepliesController < Admin::ApplicationController
-    before_action :set_reply, only: [:show, :edit, :update, :destroy]
+    before_action :set_reply, only: %i[show edit update destroy]
 
     def index
       @replies = Reply.unscoped
       if params[:q].present?
         qstr = "%#{params[:q].downcase}%"
-        @replies = @replies.where('body LIKE ?', qstr)
+        @replies = @replies.where("body LIKE ?", qstr)
       end
       if params[:login].present?
         u = User.find_by_login(params[:login])
-        @replies = @replies.where('user_id = ?', u.try(:id))
+        @replies = @replies.where("user_id = ?", u.try(:id))
       end
       @replies = @replies.order(id: :desc).includes(:topic, :user)
-      @replies = @replies.paginate(page: params[:page], per_page: 30)
+      @replies = @replies.page(params[:page])
     end
 
     def show
-      if @reply.topic.blank?
-        redirect_to admin_replies_path, alert: '帖子已经不存在'
-      end
+      redirect_to edit_admin_reply_path(@reply.id)
     end
 
     def destroy
@@ -28,8 +28,8 @@ module Admin
 
     private
 
-    def set_reply
-      @reply = Reply.unscoped.find(params[:id])
-    end
+      def set_reply
+        @reply = Reply.unscoped.find(params[:id])
+      end
   end
 end

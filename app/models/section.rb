@@ -1,11 +1,15 @@
+# frozen_string_literal: true
+
 class Section < ApplicationRecord
-  second_level_cache expires_in: 1.month
+  second_level_cache expires_in: 2.weeks
 
   has_many :nodes, dependent: :destroy
 
   validates :name, presence: true, uniqueness: true
 
   default_scope -> { order(sort: :desc) }
+
+  form_select :name
 
   after_save :update_cache_version
   after_destroy :update_cache_version
@@ -16,10 +20,10 @@ class Section < ApplicationRecord
   end
 
   def sorted_nodes
-    nodes.where.not(id: Node.no_point.id).sorted
+    nodes.where.sorted
   end
 
   def self.default
-    @default ||= Section.first || Section.create(name: '分享')
+    @default ||= Section.first || Section.create(name: "分享")
   end
 end

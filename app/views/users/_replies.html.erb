@@ -1,4 +1,9 @@
-<ul class="list-group recent-replies">
+<% if replies.blank? %>
+<div class="card-body">
+  <div class="no-result" style="padding:20px">还未参与讨论</div>
+</div>
+<% else %>
+<ul class="list-group list-group-flush recent-replies">
   <% replies.each do |reply| %>
     <% cache(['users', reply]) do %>
       <% next if reply.topic.blank? %>
@@ -14,3 +19,4 @@
     <% end %>
   <% end %>
 </ul>
+<% end %>

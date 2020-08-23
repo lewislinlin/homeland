@@ -1,8 +1,8 @@
 "zh-CN":
   common:
-    justnow: '刚刚'
-    hour: '小时'
-    minute: '分钟'
+    justnow: "刚刚"
+    hour: "小时"
+    minute: "分钟"
     edit: "修改"
     create: "新建"
     avatar: "头像"
@@ -68,17 +68,15 @@
     likes_count: 赞
     has_deleted: 已删除
     auth_with_other_services: "用其他平台的帐号登录"
-    captcha: '验证码'
-    search_result: '搜索结果'
+    captcha: "验证码"
+    search_result: "搜索结果"
   reply:
     edit_reply: "修改回帖"
-    delete_reply_success: '回帖删除成功.'
-    topic_location: '回帖所在文章'
+    delete_reply_success: "回帖删除成功."
+    topic_location: "回帖所在文章"
   photos:
     upload_and_insert_code: "上传并插入代码"
     uploading: "正在上传"
-  sites:
-    create: 提交网站
   menu:
     home: "首页"
     topics: "社区"
@@ -86,14 +84,11 @@
     gems: "Gems"
     users: "会员"
     admin: "后台"
-    notes: "记事本"
     nodes: "节点"
-    sites: "酷站"
-    jobs: "招聘"
     my_home_page: "我的主页"
     edit_account_path: "个人资料设置"
     likes: "我的收藏"
-    teams: '公司／组织'
+    teams: "公司／组织"
   comments:
     create_comment: "发表评论"
     no_comment: "暂无评论"
@@ -110,10 +105,13 @@
     recent_node_topics_description: "%{name} 社区 %{node_name} 节点最新发帖."
     recent_node_topics_title: "%{name} 社区 %{node_name} 节点"
   setting:
+    app_name: "网站名称"
     newbie_notices: "新手提示信息（支持 HTML）"
     admin_emails: "管理员 Email，在此名单的将有管理员权限（一行一个）"
     reject_newbie_reply_in_the_evening: "禁止新手在晚上回帖"
     node_ids_hide_in_topics_index: "要在论坛首页列表隐藏的节点,以逗号隔开"
+    default_locale: "默认语言 可选值: [zh-CN, en]"
+    auto_locale: "是否自动根据用户浏览器语言来切换显示语言 [true | false]"
     custom_head_html: "自定 HTML head 区域的内容"
     site_index_html: "酷站列表首页头的 HTML"
     navbar_brand_html: "导航栏 Logo"
@@ -127,6 +125,25 @@
     index_html: "网站首页 HTML"
     tips: "随机显示的小帖士（一行一个）"
     ban_words_on_reply: "回帖禁止内容（一行一个）"
+    ban_words_in_body: "正文里面禁止提及的内容，为避免误判，请准确描述，不要写太短的词"
     apns_pem: "Apple Push 证书内容，保持为空将不会触发 Push 发送动作"
     blacklist_ips: "黑名单 IP 列表，将会直接拦截请求（一行一个）"
     newbie_limit_time: "新注册用户（新手）限制期，单位秒（0 不限制），在新手期不能创建新话题，仅能回帖"
+    ban_reasons: "屏蔽原因，将会在屏蔽话题的时候作为选项（一行一个）"
+    ban_reason_html: "屏蔽原因详细描述，用于在被屏蔽的话题后面给做补充提示（HTML 格式编写）"
+    topic_create_limit_interval: "话题创建频率限制，间隔多久（单位: 秒）"
+    topic_create_hour_limit_count: "1 小时内，创建话题的数量限制（单位：篇）"
+    sign_up_daily_limit: "单日每个 IP 的注册用户数量限制，(0 不限制)"
+    use_recaptcha: "启用 Google reCaptcha 开启更强的验证码保护"
+    recaptcha_key: "Google reCaptcha 网站密钥"
+    recaptcha_secret: "Google reCaptcha 密钥"
+    allow_change_login: "允许用户修改用户名"
+    twitter_id: "Twitter ID 用于 Twitter 分享的时候提及，比如: ruby_china，不带 @"
+    share_allow_sites: "分享目标，可选 [twitter,weibo,facebook,wechat,google_plus,douban,tumblr,pinterest,linkedin,email,reddit,hacker_news]"
+    editor_languages: 编辑器插入代码语言可选项（一行一个），填写文件扩展名比如："rb, go, php, js, html"
+    sorted_plugins: 插件排序，调整这个可以影响插件在导航栏的顺序。请用换行或逗号间隔，比如："jobs, wiki, press, site"。
+    timezone: "日期时间显示时区，默认: UTC"
+  pagination:
+    next: "下一页"
+    prev: "上一页"
+    gap: "&hellip;"

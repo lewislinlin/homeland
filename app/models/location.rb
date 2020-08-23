@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 class Location < ApplicationRecord
-  second_level_cache expires_in: 1.month
+  second_level_cache expires_in: 2.weeks
 
   has_many :users
 
-  scope :hot, -> { order(users_count: :desc) }
+  scope :hot, -> { order(users_count: :desc).where.not(users_count: 0) }
 
   validates :name, presence: true, uniqueness: { case_sensitive: false }
 
@@ -12,7 +14,7 @@ class Location < ApplicationRecord
   def self.location_find_by_name(name)
     return nil if name.blank?
     name = name.downcase.strip
-    where('name ~* ?', name).first
+    where("name ~* ?", name).first
   end
 
   def self.location_find_or_create_by_name(name)

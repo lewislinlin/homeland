@@ -3,45 +3,22 @@ Contribute Guide
 
 ## Requirements
 
-* Ruby 2.3.0 +
+* Ruby 2.4.0 +
 * PostgreSQL 9.4 +
 * Redis 2.8 +
-* Memcached 1.4 +
-* ImageMagick 6.5 +
-* Elasticsearch 2.0 +
 
 ## Install in development
-
-### Vagrant
-
-Install [VirtualBox](https://www.virtualbox.org/) + [Vagrant](https://www.vagrantup.com/), and then:
-
-```bash
-$ vagrant up
-$ vagrant ssh
-$ cd /vagrant
-/vagrant $ ./bin/setup
-/vagrant $ rails s -b 0.0.0.0
-```
-
-Open http://localhost:3000 in host.
 
 ### Mac OS X, use Homebrew
 
 ```bash
-$ brew install memcached redis postgresql imagemagick gs elasticsearch
+$ brew install redis postgresql imagemagick gs
 ```
 
 ### Ubuntu
 
 ```bash
-$ sudo apt-get install memcached postgresql postgresql-contrib redis-server imagemagick ghostscript
-```
-
-Install Elasticsearch
-
-```bash
-curl -sSL https://git.io/vVHhm | bash
+$ sudo apt-get install postgresql postgresql-contrib redis-server imagemagick ghostscript libpq-dev
 ```
 
 ```bash
@@ -60,10 +37,19 @@ Installing dependencies
 The Gemfile's dependencies are satisfied
 --------------------------------------------------------------------------------
 
+Installing NPM packages
+--------------------------------------------------------------------------------
+yarn install v1.22.4
+[1/4] 🔍  Resolving packages...
+[2/4] 🚚  Fetching packages...
+[3/4] 🔗  Linking dependencies...
+[4/4] 🔨  Building fresh packages...
+✨  Done in 32.20s.
+--------------------------------------------------------------------------------
+
 Configure
 --------------------------------------------------------------------------------
 Your Redis host (default: 127.0.0.1:6379):
-Your Elasticsearch host (default: 127.0.0.1:9200):
 --------------------------------------------------------------------------------
 
 Seed default data...                                                      [Done]
@@ -72,6 +58,10 @@ Seed default data...                                                      [Done]
 
 Homeland Successfully Installed.
 
+# Session 1:
+$ yarn start
+
+# Session 2:
 $ rails s
 ```
 
@@ -79,12 +69,4 @@ $ rails s
 
 ```bash
 bundle exec rake
-```
-
-## Reindex ElasticSearch
-
-```bash
-rails elasticsearch:import:model CLASS=Page FORCE=y
-rails elasticsearch:import:model CLASS=Topic FORCE=y
-rails elasticsearch:import:model CLASS=User FORCE=y
 ```

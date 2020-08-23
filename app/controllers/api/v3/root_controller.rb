@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module V3
     class RootController < Api::V3::ApplicationController
@@ -19,7 +21,7 @@ module Api
         @meta = { time: Time.now }
         @user = current_user
 
-        render 'api/v3/users/show'
+        render "api/v3/users/show"
       end
     end
   end

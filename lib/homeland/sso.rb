@@ -1,14 +1,16 @@
+# frozen_string_literal: true
+
 module Homeland
   class SSO < SingleSignOn
     def self.sso_url
-      Setting.sso['url']
+      Setting.sso["url"]
     end
 
     def self.sso_secret
-      Setting.sso['secret']
+      Setting.sso["secret"]
     end
 
-    def self.generate_sso(return_path="/")
+    def self.generate_sso(return_path = "/")
       sso = new
       sso.nonce = SecureRandom.hex
       sso.register_nonce(return_path)
@@ -16,7 +18,7 @@ module Homeland
       sso
     end
 
-    def self.generate_url(return_path="/")
+    def self.generate_url(return_path = "/")
       generate_sso(return_path).to_url
     end
 
@@ -60,6 +62,9 @@ module Homeland
       user.name = name if user.name.blank?
       user.bio = bio if user.bio.blank?
 
+      # Add as admin
+      user.state = :admin if admin == true
+
       # change external attributes for sso record
       sso_record.username = username
       sso_record.email = email
@@ -69,28 +74,26 @@ module Homeland
       user.save!
       user.update_tracked_fields!(request)
 
-      # Add as admin
-      if admin == true
-        if !Setting.has_admin?(email)
-          Setting.admin_emails = Setting.admin_emails + "\n" + email
-        end
-      end
-
       sso_record.save!
-      sso_record && sso_record.user
+      sso_record&.user
     end
 
     def match_email_or_create_user
       user = User.find_by_email(email)
-      if !user
+      unless user
         user_params = {
           email: email,
           name: name,
           login: Homeland::Username.sanitize(username || name),
           password: Devise.friendly_token[0, 20]
         }
+        user = User.new(user_params)
 
-        user = User.create!(user_params)
+        if !user.valid?
+          user.login += "-#{external_id}"
+        end
+
+        user.save!
       end
 
       sso_record = user.sso || user.create_sso(

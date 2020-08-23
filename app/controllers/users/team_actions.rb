@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Users
   module TeamActions
     extend ActiveSupport::Concern
@@ -8,17 +10,19 @@ module Users
 
     private
 
-    def team_show
-      @topics = @user.topics.fields_for_list.last_actived.includes(:user).paginate(page: params[:page], per_page: 20)
-      fresh_when([@topics])
-    end
+      def team_show
+        @topics = Topic.where(user_id: @team.user_ids, team_id: [nil, @team.id])
+          .fields_for_list
+          .last_actived.includes(:user)
+        @topics = @topics.page(params[:page])
+      end
 
-    def only_team!
-      render_404 if @user_type != :team
-    end
+      def only_team!
+        render_404 if @user_type != :team
+      end
 
-    def set_team
-      @team = @user
-    end
+      def set_team
+        @team = @user
+      end
   end
 end

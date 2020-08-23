@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Homeland
   class Pipeline
     class MentionFilter < HTML::Pipeline::Filter
@@ -12,14 +14,14 @@ module Homeland
       end
 
       def link_mention_user_in_text!(doc, users)
-        doc.xpath('.//text()').each do |node|
+        doc.xpath(".//text()").each do |node|
           content = node.to_html
-          next unless content.include?('@')
-          in_code = has_ancestor?(node, %w(pre code))
+          next unless content.include?("@")
+          in_code = has_ancestor?(node, %w[pre code])
           content.gsub!(MENTION_REGEXP) do
             prefix = Regexp.last_match(1)
             user_placeholder = Regexp.last_match(2)
-            user_id = user_placeholder.sub(/^user/, '').to_i
+            user_id = user_placeholder.sub(/^user/, "").to_i
             user = users[user_id - 1] || user_placeholder
 
             if in_code
@@ -34,8 +36,8 @@ module Homeland
       end
 
       def link_mention_user_in_code!(doc, users)
-        doc.css('pre.highlight span').each do |node|
-          next unless node.previous && node.previous.inner_html.to_s =~ MENTION_REGEXP_IN_CODE && node.inner_html =~ /\Auser(\d+)\z/
+        doc.css("pre.highlight span").each do |node|
+          next unless node.previous&.inner_html.to_s =~ MENTION_REGEXP_IN_CODE && node.inner_html =~ /\Auser(\d+)\z/
           user_id = Regexp.last_match(1)
           user = users[user_id.to_i - 1]
           node.inner_html = user if user

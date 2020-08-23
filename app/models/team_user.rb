@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 class TeamUser < ApplicationRecord
-  enum role: %i(owner member)
-  enum status: %i(pendding accepted)
+  enum role: %i[owner member]
+  enum status: %i[pendding accepted]
 
   belongs_to :team, touch: true, counter_cache: true
   belongs_to :user
 
   validates :login, :team_id, :role, presence: true, on: :invite
-  validates :user_id, uniqueness: { scope: :team_id, message: I18n.t('teams.user_existed') }
+  validates :user_id, uniqueness: { scope: :team_id, message: I18n.t("teams.user_existed") }
 
   attr_accessor :login, :actor_id
 
@@ -29,7 +31,7 @@ class TeamUser < ApplicationRecord
 
   def notify_user_to_accept
     return unless self.pendding?
-    Notification.create notify_type: 'team_invite',
+    Notification.create notify_type: "team_invite",
                         actor_id: self.actor_id,
                         user_id: self.user_id,
                         target: self,

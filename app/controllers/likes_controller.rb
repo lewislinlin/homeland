@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 class LikesController < ApplicationController
-  before_action :authenticate_user!, only: [:create, :destroy]
+  before_action :authenticate_user!, only: %i[create destroy]
   before_action :set_likeable
 
   def index
-    @users = @item.liked_users
+    @users = @item.like_by_users.order("actions.id asc")
     render :index, layout: false
   end
 
@@ -19,24 +21,18 @@ class LikesController < ApplicationController
 
   private
 
-  def set_likeable
-    @success = false
-    @element_id = "likeable_#{params[:type]}_#{params[:id]}"
-    unless params[:type].in?(%w(Topic Reply))
-      render plain: '-1'
-      return false
-    end
+    def set_likeable
+      @success = false
+      @element_id = "likeable_#{params[:type]}_#{params[:id]}"
 
-    case params[:type].downcase
-    when 'topic'
-      klass = Topic
-    when 'reply'
-      klass = Reply
-    else
-      return false
-    end
+      defined_action = User.find_defined_action(:like, params[:type])
 
-    @item = klass.find_by_id(params[:id])
-    render plain: '-2' if @item.blank?
-  end
+      if defined_action.blank?
+        render plain: "-1"
+        return false
+      end
+
+      @item = defined_action[:target_klass].find_by(id: params[:id])
+      render plain: "-2" if @item.blank?
+    end
 end

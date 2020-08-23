@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 module Admin
   class ApplicationController < ::ApplicationController
-    layout 'admin'
+    layout "admin"
 
     before_action :authenticate_user!
     before_action :require_admin
@@ -11,7 +13,7 @@ module Admin
     end
 
     def set_active_menu
-      @current = ['/' + ['admin', controller_name].join('/')]
+      @current = ["/" + ["admin", controller_name].join("/")]
     end
   end
 end

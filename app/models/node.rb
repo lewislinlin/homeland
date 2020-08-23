@@ -1,16 +1,20 @@
+# frozen_string_literal: true
+
 class Node < ApplicationRecord
-  second_level_cache expires_in: 1.month
+  second_level_cache expires_in: 2.weeks
 
   delegate :name, to: :section, prefix: true, allow_nil: true
 
   has_many :topics
-  belongs_to :section
+  belongs_to :section, optional: true
 
   validates :name, :summary, :section, presence: true
   validates :name, uniqueness: true
 
   scope :hots, -> { order(topics_count: :desc) }
   scope :sorted, -> { order(sort: :desc) }
+
+  form_select :name
 
   after_save :update_cache_version
   after_destroy :update_cache_version
@@ -19,16 +23,6 @@ class Node < ApplicationRecord
     node = self.find_by_id(id)
     return node if node
     self.create(id: id, name: name, summary: name, section: Section.default)
-  end
-
-  # 内建 [招聘] 节点
-  def self.job
-    @job ||= self.find_builtin_node(25, '招聘')
-  end
-
-  # 内建 [NoPoint] 节点
-  def self.no_point
-    @no_point ||= self.find_builtin_node(61, 'NoPoint')
   end
 
   # 是否 Summary 过多需要折叠
@@ -43,7 +37,7 @@ class Node < ApplicationRecord
 
   # Markdown 转换过后的 HTML
   def summary_html
-    Rails.cache.fetch("#{cache_key}/summary_html") do
+    Rails.cache.fetch("#{cache_key_with_version}/summary_html") do
       Homeland::Markdown.call(summary)
     end
   end

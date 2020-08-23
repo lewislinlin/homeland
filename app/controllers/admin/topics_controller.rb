@@ -1,22 +1,25 @@
+# frozen_string_literal: true
+
 module Admin
   class TopicsController < Admin::ApplicationController
-    before_action :set_topic, only: [:show, :edit, :update, :destroy, :undestroy, :suggest, :unsuggest]
+    before_action :set_topic, only: %i[show edit update destroy undestroy suggest unsuggest]
 
     def index
       @topics = Topic.unscoped
       if params[:q].present?
         qstr = "%#{params[:q].downcase}%"
-        @topics = @topics.where('title LIKE ?', qstr)
+        @topics = @topics.where("title LIKE ?", qstr)
       end
       if params[:login].present?
         u = User.find_by_login(params[:login])
-        @topics = @topics.where('user_id = ?', u.try(:id))
+        @topics = @topics.where("user_id = ?", u.try(:id))
       end
       @topics = @topics.order(id: :desc)
-      @topics = @topics.includes(:user).paginate(page: params[:page], per_page: 30)
+      @topics = @topics.includes(:user).page(params[:page])
     end
 
     def show
+      redirect_to edit_admin_topic_path(@topic.id)
     end
 
     def new
@@ -30,17 +33,17 @@ module Admin
       @topic = Topic.new(params[:topic].permit!)
 
       if @topic.save
-        redirect_to(admin_topics_path, notice: 'Topic was successfully created.')
+        redirect_to(admin_topics_path, notice: "话题创建成功")
       else
-        render action: 'new'
+        render action: "new"
       end
     end
 
     def update
-      if @topic.update_attributes(params[:topic].permit!)
-        redirect_to(admin_topics_path, notice: 'Topic was successfully updated.')
+      if @topic.update(params[:topic].permit!)
+        redirect_to(admin_topics_path, notice: "话题更新成功")
       else
-        render action: 'edit'
+        render action: "edit"
       end
     end
 
@@ -57,18 +60,18 @@ module Admin
 
     def suggest
       @topic.update_attribute(:suggested_at, Time.now)
-      redirect_to(@topic, notice: "Topic:#{params[:id]} suggested.")
+      redirect_to(@topic, notice: "话题置顶成功")
     end
 
     def unsuggest
       @topic.update_attribute(:suggested_at, nil)
-      redirect_to(@topic, notice: "Topic:#{params[:id]} unsuggested.")
+      redirect_to(@topic, notice: "话题已取消置顶")
     end
 
     private
 
-    def set_topic
-      @topic = Topic.unscoped.find(params[:id])
-    end
+      def set_topic
+        @topic = Topic.unscoped.find(params[:id])
+      end
   end
 end

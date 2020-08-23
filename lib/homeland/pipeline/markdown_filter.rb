@@ -1,6 +1,8 @@
-require 'redcarpet'
-require 'rouge/plugins/redcarpet'
-require 'nokogiri'
+# frozen_string_literal: true
+
+require "redcarpet"
+require "rouge/plugins/redcarpet"
+require "nokogiri"
 
 module Homeland
   class Pipeline
@@ -12,9 +14,10 @@ module Homeland
         fenced_code_blocks: true,
         strikethrough: true,
         underline: true,
-        superscript: true,
+        superscript: false,
+        footnotes: false,
+        highlight: false,
         tables: true,
-        footnotes: true,
         lax_spacing: true,
         space_after_headers: true,
         disable_indented_code_blocks: true,
@@ -30,15 +33,19 @@ module Homeland
       class Render < Redcarpet::Render::HTML
         include Rouge::Plugins::Redcarpet
 
+        attr_accessor :domain
+
         class << self
           def to_html(raw)
-            @@render ||= Redcarpet::Markdown.new(self.new, DEFAULT_OPTIONS)
-            @@render.render(raw)
+            renderer = self.new
+            renderer.domain = Setting.domain
+            @render ||= Redcarpet::Markdown.new(renderer, DEFAULT_OPTIONS)
+            @render.render(raw)
           end
         end
 
         def block_code(code, lang)
-          lang.downcase! if lang.is_a?(String)
+          lang = lang.downcase if lang.is_a?(String)
           code = code.strip_heredoc
           super(code, lang)
         end
@@ -49,7 +56,7 @@ module Homeland
 
         def header(text, header_level)
           l = header_level <= 2 ? 2 : header_level
-          raw_text = Nokogiri::HTML(text).xpath('//text()')
+          raw_text = Nokogiri::HTML(text).xpath("//text()")
           %(<h#{l} id="#{raw_text}">#{text}</h#{l}>)
         end
 
@@ -58,7 +65,8 @@ module Homeland
         # ![](foo.jpg =300x200)
         # Example: https://gist.github.com/uupaa/f77d2bcf4dc7a294d109
         def image(link, title, alt_text)
-          links = link.split(' ')
+          link ||= ""
+          links = link.split(" ")
           link = links[0]
           if links.count > 1
             # 原本 Markdown 的 title 部分是需要引号的 ![](foo.jpg "Title")
@@ -77,26 +85,41 @@ module Homeland
           end
         end
 
+        def link(link, title, content)
+          external = false
+          safe_link = link&.split("?")&.first
+          uri = URI.parse(safe_link) rescue nil
+          if uri&.host && uri&.host&.downcase != self.domain
+            external = true
+          end
+
+          if external
+            %(<a href="#{link}" rel="nofollow" target="_blank" title="#{title}">#{content}</a>)
+          else
+            %(<a href="#{link}" title="#{title}">#{content}</a>)
+          end
+        end
+
         # Fix Chinese neer the URL
         def autolink(link, link_type)
           # return link
-          if link_type.to_s == 'email'
+          if link_type.to_s == "email"
             link
           else
             begin
               # 防止 C 的 autolink 出来的内容有编码错误，万一有就直接跳过转换
               # 比如这句: 此版本并非线上的http://yavaeye.com的源码.
               link.match(/.+?/)
-            rescue
+            rescue StandardError
               return link
             end
             # Fix Chinese neer the URL
             bad_text = link.match(%r{[^\w:@/\-~,$!.=?&#+|%]+}im).to_s
-            link.gsub!(bad_text, '')
+            link.gsub!(bad_text, "")
             %(<a href="#{link}" rel="nofollow" target="_blank">#{link}</a>#{bad_text})
           end
         end
-      end # end RenderHTML
+      end
     end
   end
 end

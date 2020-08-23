@@ -1,7 +1,7 @@
 <div id="topic-sidebar" data-spy="affix" data-offset-bottom="65">
-  <div class="panel panel-default">
-    <div class="panel-body">
-      <a href="#" class="btn btn-block btn-sm btn-move-page" data-type="top"><i class="fa fa-arrow-up"></i></a>
+  <div class="card">
+    <div class="card-body">
+      <a href="#" class="btn btn-default btn-block btn-sm btn-move-page" data-type="top"><i class="fa fa-arrow-up"></i></a>
       <div class="buttons">
         <div class="group likes opts">
           <%= likeable_tag(@topic) %>
@@ -15,50 +15,53 @@
       </div>
       <hr />
       <div class="group">
-        <%= social_share_button_tag h("#{@topic.title} via: @#{Setting.twitter_id} ") %>
+        <%= social_share_button_tag h("#{@topic.title}") %>
       </div>
       <hr />
       <div class="reply-buttons">
         <div class="total">
           共收到 <b><%= @topic.replies_count %></b> 条回复
         </div>
-        <a href="#reply" class="btn btn-success btn-block btn-focus-reply">参与回复</a>
+        <%= reward_user_tag(@topic.user) %>
       </div>
       <hr />
       <div class="group opts">
-        <% if admin? %>
+        <% if can?(:manage, @topic) %>
           <div style="margin-bottom: 8px">
             <% if !@topic.suggested_at.blank? %>
-            <%= link_to raw("<i class='fa fa-angle-double-up'></i> 取消"), unsuggest_admin_topic_path(@topic), method: :post, remote: true %>
+            <%= link_to raw("<i class='fa fa-pin'></i> 取消"), unsuggest_admin_topic_path(@topic), method: :post, remote: true %>
             <% else %>
-            <%= link_to raw("<i class='fa fa-angle-double-up'></i> 置顶"), suggest_admin_topic_path(@topic), method: :post, remote: true %>
+            <%= link_to raw("<i class='fa fa-pin'></i> 置顶"), suggest_admin_topic_path(@topic), method: :post, remote: true %>
             <% end %>
             <% if !@topic.excellent? %>
-            <%= link_to raw("<i class='fa fa-diamond'></i> 加精"), action_topic_path(@topic, type: 'excellent'), method: "post", remote: true %>
+            <%= link_to raw("<i class='fa fa-award'></i> 加精"), action_topic_path(@topic, type: 'excellent'), method: "post", remote: true %>
             <% end %>
-            <% if @topic.node_id != Node.no_point.id %>
-              <%= link_to raw("<i class='fa fa-ban'></i> 屏蔽"), action_topic_path(@topic, type: 'ban'), method: 'post', title: "屏蔽此贴，移动到 NoPoint 节点", remote: true %>
+
+            <% if !@topic.ban? %>
+              <%= link_to raw("<i class='fa fa-ban'></i> 屏蔽"), ban_topic_path(@topic), remote: true, title: "全站屏蔽此贴" %>
+            <% else %>
+              <%= link_to raw("<i class='fa fa-ban'></i> 取消"), action_topic_path(@topic, type: 'normal'), method: :post, remote: true, title: "取消全站屏蔽此贴" %>
             <% end %>
           </div>
         <% end %>
 
-        <% if owner?(@topic) or admin? %>
         <div>
           <% if can?(:close, @topic) %>
             <% if !@topic.closed? %>
-              <%= link_to raw("<i class='fa fa-check'></i> 结束"), action_topic_path(@topic, type: 'close'), method: 'post', title: "关闭讨论／问题已解决", remote: true, data: { toggle: 'tooltip' } %>
+              <%= link_to raw("<i class='fa fa-check-circle'></i> 结束"), action_topic_path(@topic, type: 'close'), method: 'post', title: "关闭讨论／问题已解决", remote: true, data: { toggle: 'tooltip' } %>
             <% else %>
               <%= link_to raw("<i class='fa fa-undo'></i> 开启"), action_topic_path(@topic, type: 'open'), method: 'post', title: "重新开启话题", remote: true, data: { toggle: 'tooltip' } %>
             <% end %>
           <% end %>
-          <%= link_to raw('<i class="fa fa-pencil"></i> 编辑'), edit_topic_path(@topic), title: "修改本帖" %>
+          <% if can?(:edit, @topic) %>
+          <%= link_to raw('<i class="fa fa-edit"></i> 编辑'), edit_topic_path(@topic), title: "修改本帖" %>
+          <% end %>
           <% if can?(:destroy, @topic) %>
             <%= link_to raw('<i class="fa fa-trash"></i> 删除'), topic_path(@topic.id), method: :delete, 'data-confirm' => t("common.confirm_delete"), title: "删除本帖", remote: true %>
           <% end %>
         </div>
-        <% end %>
       </div>
-      <a href="#" class="btn btn-block btn-move-page" data-type="bottom"><i class="fa fa-arrow-down"></i></a>
+      <a href="#" class="btn btn-default btn-sm btn-block btn-move-page" data-type="bottom"><i class="fa fa-arrow-down"></i></a>
     </div>
   </div>
 

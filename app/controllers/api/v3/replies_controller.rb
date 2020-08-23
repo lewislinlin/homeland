@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module Api
   module V3
     class RepliesController < Api::V3::ApplicationController
-      before_action :doorkeeper_authorize!, only: [:update, :destroy]
-      before_action :set_reply, only: [:show, :update, :destroy]
+      before_action :doorkeeper_authorize!, only: %i[update destroy]
+      before_action :set_reply, only: %i[show update destroy]
 
       # 获取回帖的详细内容（一般用于编辑回帖的时候）
       #
@@ -24,7 +26,7 @@ module Api
 
         @reply.body = params[:body]
         @reply.save!
-        render 'show'
+        render "show"
       end
 
       # 删除回帖
@@ -39,9 +41,9 @@ module Api
 
       private
 
-      def set_reply
-        @reply = Reply.find(params[:id])
-      end
+        def set_reply
+          @reply = Reply.find(params[:id])
+        end
     end
   end
 end

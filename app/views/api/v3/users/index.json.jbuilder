@@ -1,1 +1,3 @@
-json.users @users, partial: 'user', as: :user
+# frozen_string_literal: true
+
+json.users @users, partial: "user", as: :user

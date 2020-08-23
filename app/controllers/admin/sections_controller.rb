@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 module Admin
   class SectionsController < Admin::ApplicationController
-    before_action :set_section, only: [:show, :edit, :update, :destroy]
+    before_action :set_section, only: %i[show edit update destroy]
 
     def index
       @sections = Section.all
@@ -20,17 +22,17 @@ module Admin
       @section = Section.new(params[:section].permit!)
 
       if @section.save
-        redirect_to(admin_sections_path, notice: 'Section was successfully created.')
+        redirect_to(admin_sections_path, notice: "Section was successfully created.")
       else
-        render action: 'new'
+        render action: "new"
       end
     end
 
     def update
-      if @section.update_attributes(params[:section].permit!)
-        redirect_to(admin_sections_path, notice: 'Section was successfully updated.')
+      if @section.update(params[:section].permit!)
+        redirect_to(admin_sections_path, notice: "Section was successfully updated.")
       else
-        render action: 'edit'
+        render action: "edit"
       end
     end
 
@@ -42,8 +44,8 @@ module Admin
 
     private
 
-    def set_section
-      @section = Section.find(params[:id])
-    end
+      def set_section
+        @section = Section.find(params[:id])
+      end
   end
 end

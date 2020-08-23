@@ -1,10 +1,19 @@
-<%= simple_form_for(@site_config, url: admin_site_config_path(@site_config.var), method: 'patch') do |f| %>
+<%= form_for @site_config, url: admin_site_config_path(@site_config.var), method: 'patch' do |f| %>
   <div class="form-group">
-    <label class="control-label"><%= @site_config.var %></label>
-    <%= f.input :value, input_html: { rows: 20, value: Setting[@site_config.var] }, label: false, class: 'form-control' %>
-    <div class="help-block"><%= t("setting.#{@site_config.var}") %></div>
+    <label><%= @site_config.var %></label>
+    <div class="form-text" style="margin-bottom: 10px"><%= t("setting.#{@site_config.var}") %></div>
+    <%
+
+    value = Setting.send(@site_config.var)
+    value = value.join("\n") if value.is_a?(Array)
+    %>
+    <% if @site_config.var == "timezone" %>
+      <%= f.select :value, ActiveSupport::TimeZone.all.collect(&:name), { value: value }, { class: 'form-control' } %>
+    <% else %>
+      <%= f.text_area :value, value: value, class: 'form-control', rows: 15 %>
+    <% end %>
   </div>
-  <div class="form-group">
+  <div class="form-actions">
     <%= f.submit t("common.save"), class: "btn btn-primary", 'data-disable-with' => t("common.saving") %>
     <a href="<%= admin_site_configs_path %>" class="btn"><%= t("common.cancel") %></a>
   </div>

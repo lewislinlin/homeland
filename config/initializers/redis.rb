@@ -1,17 +1,35 @@
-require 'redis'
-require 'redis-namespace'
-require 'redis/objects'
+# frozen_string_literal: true
+
+require "redis"
+require "redis-namespace"
+require "redis/objects"
+
+return if ENV["RAILS_PRECOMPILE"]
 
 redis_config = Rails.application.config_for(:redis)
 
-$redis = Redis.new(host: redis_config['host'], port: redis_config['port'])
-$redis.select(0)
+$redis = Redis.new(url: redis_config["url"], db: 0)
+sidekiq_url = redis_config["url"]
 Redis::Objects.redis = $redis
 
-sidekiq_url = "redis://#{redis_config['host']}:#{redis_config['port']}/0"
 Sidekiq.configure_server do |config|
-  config.redis = { namespace: 'sidekiq', url: sidekiq_url }
+  config.redis = { namespace: "sidekiq", url: sidekiq_url, db: 0 }
 end
 Sidekiq.configure_client do |config|
-  config.redis = { namespace: 'sidekiq', url: sidekiq_url }
+  config.redis = { namespace: "sidekiq", url: sidekiq_url, db: 0 }
 end
+
+if Sidekiq.server?
+  schedule_config = YAML.load(ERB.new(File.read("config/schedule.yml")).result)
+  Sidekiq::Cron::Job.load_from_hash(schedule_config)
+end
+
+
+SecondLevelCache.configure.cache_key_prefix = "slc:2"
+
+# FIXME: Upgrade redis-objects then remove this line.
+# `Redis#exists(key)` will return an Integer in redis-rb 4.3. `exists?` returns a boolean,
+# you should use it instead. To opt-in to the new behavior now you can set
+# Redis.exists_returns_integer =  true. To disable this message and keep the current (boolean) behaviour of 'exists'
+# you can set `Redis.exists_returns_integer = false`, but this option will be removed in 5.0.
+Redis.exists_returns_integer = false

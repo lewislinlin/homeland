@@ -1,7 +1,7 @@
-class Photo < ApplicationRecord
-  belongs_to :user
+# frozen_string_literal: true
 
-  validates_presence_of :image
+class Photo < ApplicationRecord
+  belongs_to :user, optional: true
 
   # 封面图
   mount_uploader :image, PhotoUploader

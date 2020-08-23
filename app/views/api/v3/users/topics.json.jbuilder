@@ -1,1 +1,3 @@
-json.topics @topics, partial: 'topic', as: :topic
+# frozen_string_literal: true
+
+json.topics @topics, partial: "topic", as: :topic
