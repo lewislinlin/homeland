@@ -24,10 +24,10 @@ Rails.application.routes.draw do
   get "status", to: "home#status"
 
   devise_for :users, path: "account", controllers: {
-    registrations: :account,
-    sessions: :sessions,
-    passwords: :passwords,
-    omniauth_callbacks: "auth/omniauth_callbacks"
+    registrations: "users/registrations",
+    sessions: "users/sessions",
+    passwords: "users/passwords",
+    omniauth_callbacks: "users/omniauth_callbacks"
   }
 
   resource :setting do
@@ -70,6 +70,7 @@ Rails.application.routes.draw do
       post :action
       # ban popup window
       get :ban
+      post :read
     end
 
     collection do
@@ -202,6 +203,7 @@ Rails.application.routes.draw do
   constraints(id: /[#{User::LOGIN_FORMAT}]*/) do
     resources :users, path: "", as: "users" do
       member do
+        get :feed
         # User only
         get :topics
         get :replies

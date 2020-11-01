@@ -10,6 +10,10 @@ Devise.setup do |config|
   # Configure the class responsible to send e-mails.
   config.mailer = "Devise::Mailer"
 
+  # ==> Controller configuration
+  # Configure the parent class to the devise controllers.
+  # config.parent_controller = "DeviseController"
+
   config.parent_mailer = "ApplicationMailer"
 
   # ==> ORM configuration
@@ -176,8 +180,14 @@ Devise.setup do |config|
   # If you have any extra navigational formats, like :iphone or :mobile, you
   # should add them to the navigational formats lists. Default is [:html]
   # config.navigational_formats = [:html, :iphone]
-  if Setting.has_module? :github
-    config.omniauth :github, Setting.github_token, Setting.github_secret
+  if Setting.has_omniauth? :github
+    config.omniauth :github, Setting.github_api_key, Setting.github_api_secret
+  end
+  if Setting.has_omniauth? :twitter
+    config.omniauth :twitter, Setting.twitter_api_key, Setting.twitter_api_secret
+  end
+  if Setting.has_omniauth? :wechat
+    config.omniauth :wechat, Setting.wechat_api_key, Setting.wechat_api_secret, authorize_params: { scope: "snsapi_base" }
   end
   # config.omniauth :open_id, :store => OpenID::Store::Filesystem.new('/tmp'), :name => 'google', :identifier => 'https://www.google.com/accounts/o8/id', :require => 'omniauth-openid'
 

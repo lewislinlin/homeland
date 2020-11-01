@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_21_022652) do
+ActiveRecord::Schema.define(version: 2020_10_16_074728) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,14 +35,6 @@ ActiveRecord::Schema.define(version: 2020_07_21_022652) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["provider", "uid"], name: "index_authorizations_on_provider_and_uid"
-  end
-
-  create_table "commentable_pages", force: :cascade do |t|
-    t.string "name"
-    t.integer "user_id"
-    t.integer "comments_count", default: 0, null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "comments", id: :serial, force: :cascade do |t|
@@ -81,14 +73,6 @@ ActiveRecord::Schema.define(version: 2020_07_21_022652) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["name"], name: "index_locations_on_name"
-  end
-
-  create_table "monkeys", force: :cascade do |t|
-    t.string "name"
-    t.integer "user_id"
-    t.integer "comments_count"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "nodes", id: :serial, force: :cascade do |t|
@@ -234,6 +218,7 @@ ActiveRecord::Schema.define(version: 2020_07_21_022652) do
     t.integer "user_id", null: false
     t.jsonb "contacts", default: {}, null: false
     t.jsonb "rewards", default: {}, null: false
+    t.jsonb "preferences", default: {}, null: false
     t.index ["user_id"], name: "index_profiles_on_user_id", unique: true
   end
 
@@ -316,15 +301,6 @@ ActiveRecord::Schema.define(version: 2020_07_21_022652) do
     t.datetime "updated_at", null: false
     t.index ["team_id"], name: "index_team_users_on_team_id"
     t.index ["user_id"], name: "index_team_users_on_user_id"
-  end
-
-  create_table "test_documents", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "reply_to_id"
-    t.integer "mentioned_user_ids", default: [], array: true
-    t.text "body"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "topics", id: :serial, force: :cascade do |t|
@@ -421,14 +397,6 @@ ActiveRecord::Schema.define(version: 2020_07_21_022652) do
     t.index ["location"], name: "index_users_on_location"
     t.index ["login"], name: "index_users_on_login", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
-  end
-
-  create_table "walking_deads", force: :cascade do |t|
-    t.string "name"
-    t.string "tag"
-    t.datetime "deleted_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
   end
 
 end

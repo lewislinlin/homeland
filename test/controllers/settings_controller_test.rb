@@ -11,7 +11,7 @@ describe SettingsController do
       Setting.stubs(:sso_enabled?).returns(false)
       get setting_path
       assert_equal 200, response.status
-      assert_equal true, response.body.include?("更新资料")
+      assert_equal true, response.body.include?("更新")
       assert_equal true, response.body.include?("登录密码")
       assert_equal true, response.body.include?(%(enctype="multipart/form-data"))
 
@@ -41,8 +41,8 @@ describe SettingsController do
       sign_in user
       get account_setting_path
       assert_equal 200, response.status
-      assert_equal true, response.body.include?("绑定其他帐号用于登录")
-      assert_equal true, response.body.include?("删除账号")
+      assert_select ".authorizations", 0
+      assert_select ".delete-account", text: /删除账号/
     end
   end
 
@@ -82,6 +82,17 @@ describe SettingsController do
 
       sign_in user
       put setting_path, params: { user: { location: "BeiJing", profiles: { alipay: "alipay" } } }
+      assert_redirected_to setting_path
+
+      put setting_path, params: { user: { location: "BeiJing", theme: "dark" } }
+      user.reload
+      assert_equal "dark", user.theme
+      assert_redirected_to setting_path
+
+      old_theme = user.theme
+      put setting_path, params: { user: { location: "BeiJing", theme: "foo" } }
+      user.reload
+      assert_equal old_theme, user.theme
       assert_redirected_to setting_path
 
       put setting_path, params: { by: "profile", user: { location: "BeiJing", profiles: { alipay: "alipay" } } }
@@ -143,6 +154,20 @@ describe SettingsController do
       sign_in user
       delete auth_unbind_setting_path("github"), params: { id: user.login }
       assert_redirected_to account_setting_path
+      assert_nil user.authorizations.where(provider: "github").first
+    end
+
+    it "should not unbind with legacy oauth user" do
+      user = create(:user, email: "foo@example.com")
+      user.bind_service("provider" => "github", "uid" => "ruby-china")
+      assert_equal true, user.legacy_omniauth_logined?
+
+      sign_in user
+      delete auth_unbind_setting_path("github"), params: { id: user.login }
+
+      assert_redirected_to account_setting_path
+      follow_redirect!
+      assert_select ".alert", text: /账户三方账号登录且未设置 Email 和密码，不允许解绑/
     end
   end
 end

@@ -38,7 +38,7 @@ gem "carrierwave"
 gem "carrierwave-aliyun"
 gem "carrierwave-upyun"
 gem "carrierwave-qiniu"
-gem "qiniu", github: "huacnlee/qiniu-ruby-sdk", branch: "patch-1"
+gem "qiniu", github: "qiniu/ruby-sdk", branch: "develop"
 
 # Lazy load
 gem "mini_magick", require: false
@@ -70,6 +70,8 @@ gem "form-select"
 # 三方平台 OAuth 验证登录
 gem "omniauth"
 gem "omniauth-github"
+gem "omniauth-twitter"
+gem "omniauth-wechat-oauth2"
 
 # Permission
 gem "cancancan"

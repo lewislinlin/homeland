@@ -13,7 +13,8 @@ const AppView = Backbone.View.extend({
     "click a.button-block-user": "blockUser",
     "click a.button-follow-user": "followUser",
     "click a.button-block-node": "blockNode",
-    "click a.rucaptcha-image-box": "reLoadRucaptchaImage"
+    "click a.rucaptcha-image-box": "reLoadRucaptchaImage",
+    "click .topics .topic": "visitTopic"
   },
 
   initialize() {
@@ -239,7 +240,7 @@ const AppView = Backbone.View.extend({
         success(res) {
           if (res.code === 0) {
             btn.addClass('active').attr("title", "");
-            span.text("取消关注");
+            span.text("已关注");
             return followerCounter.text(res.data.followers_count);
           }
         }
@@ -341,12 +342,48 @@ const AppView = Backbone.View.extend({
     } else {
       return $(".header.navbar").removeClass('fixed-title');
     }
+  },
+
+
+  visitTopic(e) {
+    const { target, currentTarget } = e
+    if (target.tagName === 'A' || target.tagName === 'IMG') {
+      return
+    }
+    currentTarget.querySelector(".title a").click()
+  },
+
+});
+
+// Patch for auto dark mode
+function getTheme() {
+  let preference = $("meta[name='theme']").attr("content");
+
+  if (preference === 'auto') {
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    } else {
+      return 'light';
+    }
   }
+
+  return preference;
+}
+
+function switchTheme() {
+  let theme = getTheme();
+  document.documentElement.setAttribute('data-theme', theme);
+}
+
+const mediaDark = window.matchMedia('(prefers-color-scheme: dark)');
+mediaDark.addEventListener("change", () => {
+  switchTheme();
 });
 
 document.addEventListener('turbolinks:load', () => {
   window._appView = new AppView();
-})
+  switchTheme();
+});
 
 document.addEventListener('turbolinks:click', (event) => {
   if (event.target.getAttribute('href').charAt(0) === '#') {
@@ -354,4 +391,4 @@ document.addEventListener('turbolinks:click', (event) => {
   }
 });
 
-
+switchTheme();

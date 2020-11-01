@@ -10,11 +10,12 @@
     background: none;
     text-decoration: underline;
   }
+
   .nav-tabs > .active > a,
   .nav-tabs > .active > a:hover {
     color: var(--btn-default-text-color);
-    background-color: var(--btn-default-background-color);
-    border: 1px solid var(--btn-default-border-color);
+    background: var(--card-background-color);
+    border: 1px solid var(--card-border-color);
     border-bottom-color: transparent;
     cursor: default;
   }
@@ -268,20 +269,52 @@ table.node-topics {
   padding-right: 0;
   .profile {
     .avatar {
+      .media-object {
+        width: 64px;
+        height: 64px;
+      }
       .level {
         margin-top: 6px;
         text-align: center;
       }
     }
+
+    .name-box {
+      text-decoration: none;
+
+      .fullname {
+        font-size: 18px;
+        color: var(--text-color);
+        font-weight: bold;
+      }
+      .login {
+        font-size: 16px;
+        color: var(--text-color1);
+      }
+
+      .user-badge {
+        text-align: right;
+        .opts {
+          margin-top: 5px;
+        }
+      }
+    }
     .item {
       margin-bottom: 5px;
+      a {
+        color: var(--text-color);
+      }
+      .fa {
+        color: #aaa;
+        margin-right: 6px;
+      }
     }
-    .item a {
-      color: var(--text-color);
-    }
+
     .number {
+      font-size: 14px;
       color: var(--text-color2);
     }
+
     .counts {
       color: var(--text-color2);
       span {
@@ -314,13 +347,22 @@ table.node-topics {
       padding-top: 15px;
     }
     .social {
-      font-size: 18px;
-      a {
-        color: var(--text-color2);
-        margin-right: 8px;
+      font-size: 24px;
+      a:link,
+      a:visited {
+        text-decoration: none;
+        .icon {
+          color: var(--text-color1);
+        }
       }
       a:hover {
-        color: var(--text-color1);
+        .icon {
+          color: var(--text-color);
+        }
+      }
+
+      a + a {
+        margin-left: 20px;
       }
     }
     .tagline {
@@ -422,5 +464,113 @@ table.node-topics {
 .avatar-preview {
   .media-object {
     display: inline-block;
+  }
+}
+
+.user-profile-card {
+  text-align: left;
+  .item {
+    margin-bottom: 5px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .name-box {
+    text-decoration: none;
+
+    .fullname {
+      color: var(--text-color);
+      font-weight: bold;
+    }
+    .login {
+      color: var(--text-color1);
+    }
+  }
+
+  .avatar-box {
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+  .tagline {
+    margin-bottom: 10px;
+    line-height: 18px;
+    max-height: 54px;
+    color: var(--text-color2);
+    // white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .company,
+  .location {
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-color1);
+
+    .fa {
+      width: 18px;
+    }
+  }
+  .social {
+    font-size: 18px;
+
+    a {
+      text-decoration: none;
+    }
+
+    .icon {
+      color: var(--text-color1);
+    }
+
+    a:hover {
+      .icon {
+        color: var(--text-color);
+      }
+    }
+    a + a {
+      margin-left: 10px;
+    }
+  }
+  .buttons {
+    margin-top: 10px;
+    .btn {
+      margin-top: 0;
+    }
+    .btn + .btn {
+      margin-left: 8px;
+    }
+  }
+}
+
+.button-follow-user.btn-primary.active {
+  background: var(--btn-default-active-background-color) !important;
+  border-color: var(--btn-default-active-border-color) !important;
+  color: var(--text-color1) !important;
+}
+
+.opts {
+  .button-follow-user {
+    &.active {
+      background: var(--opts-link-hover-background-color);
+      color: var(--text-color1) !important;
+      .fa {
+        color: var(--text-color1) !important;
+      }
+    }
+  }
+}
+
+.page-settings {
+  .themes {
+    .form-check + .form-check {
+      margin-left: 15px;
+    }
+  }
+
+  .form-actions {
+    .btn-primary {
+      min-width: 150px;
+    }
   }
 }

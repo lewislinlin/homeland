@@ -13,4 +13,19 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
   &-warning {
     @extend .fa-exclamation-triangle;
   }
+  &-pencil {
+    @extend .fa-edit;
+  }
+  &-email {
+    @extend .fa-envelope;
+  }
+  &-company {
+    @extend .fa-briefcase;
+  }
+  &-location {
+    @extend .fa-map-marked;
+  }
+  &-wechat {
+    @extend .fa-weixin;
+  }
 }
